@@ -21,9 +21,12 @@ class GameScene: SKScene {
     var touchLocation = CGPoint()
     var enemySpeed: TimeInterval = 4.0
     var lastSpeedIncrease: TimeInterval = 0.0
-    let speedIncreaseInterval: TimeInterval = 10.0
+    let speedIncreaseInterval: TimeInterval = 15.0
+    let speedIncreaseIncrement: TimeInterval = 0.85 // The lower the number, the faster the enemy moves
+    var enemySpawnRate: TimeInterval = 2.0
     var invincible: Bool = false
     var lives: Int = 11
+    var enemyExists: Bool = false
     
     // Player actions
     let actionUp = SKAction.moveBy(x: 0.0, y: 400, duration: 0.1)
@@ -60,12 +63,6 @@ class GameScene: SKScene {
         downArrow.zPosition = 1
         downArrow.position = CGPoint(x: size.width/8, y: size.height/2)
         addChild(downArrow)
-        
-        run(SKAction.repeatForever(
-            SKAction.sequence([SKAction.run() { [weak self] in
-                self?.spawnEnemy()
-                },
-                SKAction.wait(forDuration: 2.0)])))
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -77,6 +74,11 @@ class GameScene: SKScene {
                 self.view?.presentScene(myScene, transition: reveal)
             }
             self.run(block)
+        }
+        
+        if !enemyExists {
+            enemyExists = true
+            spawnEnemy()
         }
         
         if touched && !moving {
@@ -188,6 +190,9 @@ class GameScene: SKScene {
         
         let actionMove = SKAction.moveBy(x: -(size.width + enemy.size.width), y: 0, duration: enemySpeed)
         let actionRemove = SKAction.removeFromParent()
-        enemy.run(SKAction.sequence([actionMove, actionRemove]))
+        let setEnemyExists = SKAction.run() { [weak self] in
+            self?.enemyExists = false
+        }
+        enemy.run(SKAction.sequence([actionMove, actionRemove, setEnemyExists]))
     }
 }
