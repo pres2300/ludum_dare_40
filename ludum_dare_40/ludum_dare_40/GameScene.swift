@@ -23,6 +23,7 @@ class GameScene: SKScene {
     var lastSpeedIncrease: TimeInterval = 0.0
     let speedIncreaseInterval: TimeInterval = 10.0
     var invincible: Bool = false
+    var lives: Int = 11
     
     // Player actions
     let actionUp = SKAction.moveBy(x: 0.0, y: 400, duration: 0.1)
@@ -68,6 +69,16 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        if 0 >= lives {
+            let block = SKAction.run {
+                let myScene = GameOverScene(size: self.size)
+                myScene.scaleMode = self.scaleMode
+                let reveal = SKTransition.fade(withDuration: 1.5)
+                self.view?.presentScene(myScene, transition: reveal)
+            }
+            self.run(block)
+        }
+        
         if touched && !moving {
             
             if touchLocation.x > size.width/2 {
@@ -151,6 +162,8 @@ class GameScene: SKScene {
         }
         
         let groupActions = SKAction.group([growAction, blinkAction])
+        
+        lives -= 1
         
         player.run(SKAction.sequence([groupActions, setHidden]))
     }
