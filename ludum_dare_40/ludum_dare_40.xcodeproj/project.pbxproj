@@ -13,6 +13,7 @@
 		1671B1851FD4626E009993F3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1671B1831FD4626E009993F3 /* Main.storyboard */; };
 		1671B1871FD4626E009993F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1671B1861FD4626E009993F3 /* Assets.xcassets */; };
 		1671B18A1FD4626E009993F3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1671B1881FD4626E009993F3 /* LaunchScreen.storyboard */; };
+		1671B1921FD47532009993F3 /* CGUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671B1911FD47532009993F3 /* CGUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		1671B1861FD4626E009993F3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1671B1891FD4626E009993F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1671B18B1FD4626E009993F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1671B1911FD47532009993F3 /* CGUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			children = (
 				1671B1791FD4626E009993F3 /* AppDelegate.swift */,
 				1671B17F1FD4626E009993F3 /* GameScene.swift */,
+				1671B1911FD47532009993F3 /* CGUtils.swift */,
 				1671B1811FD4626E009993F3 /* GameViewController.swift */,
 				1671B1831FD4626E009993F3 /* Main.storyboard */,
 				1671B1861FD4626E009993F3 /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 				1671B1801FD4626E009993F3 /* GameScene.swift in Sources */,
 				1671B1821FD4626E009993F3 /* GameViewController.swift in Sources */,
 				1671B17A1FD4626E009993F3 /* AppDelegate.swift in Sources */,
+				1671B1921FD47532009993F3 /* CGUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
