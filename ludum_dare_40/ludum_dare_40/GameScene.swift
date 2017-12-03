@@ -12,11 +12,17 @@ import GameplayKit
 class GameScene: SKScene {
     
     let player = SKSpriteNode(imageNamed: "player")
+    let upArrow = SKSpriteNode(imageNamed: "up")
+    let downArrow = SKSpriteNode(imageNamed: "down")
     let playArea: CGRect
     var touched: Bool = false
     var moving: Bool = false
     var scale: CGFloat = 0.25
     var touchLocation = CGPoint()
+    var enemySpeed: TimeInterval = 4.0
+    var lastSpeedIncrease: TimeInterval = 0.0
+    let speedIncreaseInterval: TimeInterval = 10.0
+    var invincible: Bool = false
     
     // Player actions
     let actionUp = SKAction.moveBy(x: 0.0, y: 400, duration: 0.1)
@@ -46,6 +52,14 @@ class GameScene: SKScene {
         player.position = CGPoint(x: 400, y: size.height/2)
         addChild(player)
         
+        upArrow.zPosition = 1
+        upArrow.position = CGPoint(x: 7*(size.width/8), y: size.height/2)
+        addChild(upArrow)
+        
+        downArrow.zPosition = 1
+        downArrow.position = CGPoint(x: size.width/8, y: size.height/2)
+        addChild(downArrow)
+        
         run(SKAction.repeatForever(
             SKAction.sequence([SKAction.run() { [weak self] in
                 self?.spawnEnemy()
@@ -63,6 +77,17 @@ class GameScene: SKScene {
                 playerDuck()
             }
         }
+        
+        if currentTime - lastSpeedIncrease > speedIncreaseInterval {
+            lastSpeedIncrease = currentTime
+            if enemySpeed > 0.1 {
+                enemySpeed = enemySpeed*0.75
+            }
+        }
+    }
+    
+    override func didEvaluateActions() {
+        checkCollisions()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -81,6 +106,22 @@ class GameScene: SKScene {
         player.run(actionReturn)
     }
     
+    func checkCollisions() {
+        if invincible {
+            return
+        }
+        var hitEnemies: [SKSpriteNode] = []
+        enumerateChildNodes(withName: "enemy") { node, _ in
+            let enemy = node as! SKSpriteNode
+            if enemy.frame.intersects(self.player.frame) {
+                hitEnemies.append(enemy)
+            }
+        }
+        for _ in hitEnemies {
+            playerHit()
+        }
+    }
+    
     func playerJump() {
         moving = true
         player.run(actionUp)
@@ -91,17 +132,48 @@ class GameScene: SKScene {
         player.run(actionDown)
     }
     
+    func playerHit() {
+        invincible = true
+        
+        let growAction = SKAction.scale(by: 1.2, duration: 0.25)
+        
+        let blinkTimes = 10.0
+        let duration = 1.0
+        let blinkAction = SKAction.customAction(withDuration: duration) { node, elapsedTime in
+            let slice = duration / blinkTimes
+            let remainder = Double(elapsedTime).truncatingRemainder(
+                dividingBy: slice)
+            node.isHidden = remainder > slice / 2
+        }
+        let setHidden = SKAction.run() { [weak self] in
+            self?.player.isHidden = false
+            self?.invincible = false
+        }
+        
+        let groupActions = SKAction.group([growAction, blinkAction])
+        
+        player.run(SKAction.sequence([groupActions, setHidden]))
+    }
+    
     func spawnEnemy() {
         let enemy = SKSpriteNode(imageNamed: "enemy")
+        let topOrBot = arc4random() % 2
+        var yPosition = CGFloat()
+        enemy.zPosition = 50
+        
+        if topOrBot > 0 {
+            yPosition = playArea.maxY - enemy.size.height/2
+        }
+        else {
+            yPosition = playArea.minY + enemy.size.height/2
+        }
         enemy.name = "enemy"
         enemy.position = CGPoint(
             x: playArea.maxX + enemy.size.width/2,
-            y: CGFloat.random(
-                min: playArea.minY + enemy.size.height/2,
-                max: playArea.maxY - enemy.size.height/2))
+            y: yPosition)
         addChild(enemy)
         
-        let actionMove = SKAction.moveBy(x: -(size.width + enemy.size.width), y: 0, duration: 2.0)
+        let actionMove = SKAction.moveBy(x: -(size.width + enemy.size.width), y: 0, duration: enemySpeed)
         let actionRemove = SKAction.removeFromParent()
         enemy.run(SKAction.sequence([actionMove, actionRemove]))
     }
