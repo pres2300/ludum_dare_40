@@ -28,10 +28,6 @@ class GameScene: SKScene {
     var lives: Int = 11
     var enemyExists: Bool = false
     
-    // Player actions
-    let actionUp = SKAction.moveBy(x: 0.0, y: 400, duration: 0.1)
-    let actionDown = SKAction.moveBy(x: 0.0, y: -400, duration: 0.1)
-    
     override init(size: CGSize) {
         let maxAspectRatio:CGFloat = 16.0/9.0
         let playableHeight = size.width / maxAspectRatio
@@ -137,11 +133,13 @@ class GameScene: SKScene {
     
     func playerJump() {
         moving = true
+        let actionUp = SKAction.move(to: CGPoint(x: 400, y: playArea.maxY-200), duration: 0.1)
         player.run(actionUp)
     }
     
     func playerDuck() {
         moving = true
+        let actionDown = SKAction.move(to: CGPoint(x: 400, y: playArea.minY+200), duration: 0.1)
         player.run(actionDown)
     }
     
