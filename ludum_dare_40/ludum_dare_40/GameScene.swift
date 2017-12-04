@@ -27,6 +27,9 @@ class GameScene: SKScene {
     var invincible: Bool = false
     var lives: Int = 11
     var enemyExists: Bool = false
+    var oneSecond: TimeInterval = 0.0
+    var score: Int = 0
+    let scoreLabel = SKLabelNode(fontNamed: "North to South")
     
     override init(size: CGSize) {
         let maxAspectRatio:CGFloat = 16.0/9.0
@@ -59,12 +62,23 @@ class GameScene: SKScene {
         downArrow.zPosition = 1
         downArrow.position = CGPoint(x: size.width/8, y: size.height/2)
         addChild(downArrow)
+        
+        scoreLabel.text = "Score: \(score)"
+        scoreLabel.fontColor = SKColor.black
+        scoreLabel.fontSize = 75
+        scoreLabel.zPosition = 100
+        scoreLabel.horizontalAlignmentMode = .left
+        scoreLabel.verticalAlignmentMode = .top
+        scoreLabel.position = CGPoint(
+            x: playArea.maxX/2-220,
+            y: playArea.maxY-120)
+        addChild(scoreLabel)
     }
     
     override func update(_ currentTime: TimeInterval) {
         if 0 >= lives {
             let block = SKAction.run {
-                let myScene = GameOverScene(size: self.size)
+                let myScene = GameOverScene(size: self.size, score: self.score, playArea: self.playArea)
                 myScene.scaleMode = self.scaleMode
                 let reveal = SKTransition.fade(withDuration: 1.5)
                 self.view?.presentScene(myScene, transition: reveal)
@@ -92,6 +106,12 @@ class GameScene: SKScene {
             if enemySpeed > 0.1 {
                 enemySpeed = enemySpeed*0.75
             }
+        }
+        
+        if currentTime - oneSecond > 1.0 {
+            score += 1;
+            oneSecond = currentTime
+            scoreLabel.text = "Score: \(score)"
         }
     }
     
